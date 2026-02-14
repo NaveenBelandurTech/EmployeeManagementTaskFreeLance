@@ -3,6 +3,9 @@ import Validation from "../utils/validation";
 import { Auth } from "../utils/constant";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { ToastContainer, toast } from "react-toastify";
+import { Link } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { addUser } from "../utils/userSlice";
 
 const Register = () => {
   const Username = useRef();
@@ -10,6 +13,7 @@ const Register = () => {
   const Email = useRef();
   const [hide, setHide] = useState(false);
   const [error, setError] = useState("");
+  const Dispatch = useDispatch();
 
   const handleClick = () => {
     const isValid = Validation(
@@ -26,7 +30,10 @@ const Register = () => {
       .then((userCredential) => {
         const user = userCredential.user;
         {
-          console.log(user);
+          const userList = user.uid;
+          const email = user.email;
+          const formData = { userList, email };
+          Dispatch(addUser(formData));
         }
         if (user) {
           updateProfile(Auth.currentUser, {
@@ -124,6 +131,14 @@ const Register = () => {
           >
             Register
           </button>
+          <div className="flex justify-start">
+            <p>
+              Already User{" "}
+              <Link className="text-blue-400 cursor-pointer" to="/">
+                Login
+              </Link>{" "}
+            </p>
+          </div>
         </form>
       </section>
     </>
